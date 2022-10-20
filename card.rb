@@ -8,8 +8,12 @@ class Card
 
   def cost
     return 10 if %w[J Q K].include?(face)
-    return [1, 11] if face == 'A'
+    return 11 if ace?
 
     face.to_i
+  end
+
+  def ace?
+    face == 'A'
   end
 end

@@ -1,6 +1,8 @@
 require './bank'
 
 class Person
+  BLACKJACK = 21
+
   attr_reader :name, :cards, :deposit
 
   def initialize(name)
@@ -26,10 +28,15 @@ class Person
   end
 
   def show_sum_points
-    value = 0
+    value = []
+    aces_count = 0
     @cards.each do |card|
-      value += card.cost
+      value << card.cost
+      aces_count += 1 if card.face == 'A'
     end
-    value
+    value.sum if value.sum == BLACKJACK
+    value.sum - 20 if aces_count = 3
+    value.sum - 10 if aces_count = 2
+    value.sum
   end
 end
