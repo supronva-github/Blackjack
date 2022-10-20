@@ -24,4 +24,12 @@ class Person
   def show_cards
     cards.join(',')
   end
+
+  def show_sum_points
+    value = 0
+    @cards.each do |card|
+      value += card.cost
+    end
+    value
+  end
 end
