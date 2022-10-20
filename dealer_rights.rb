@@ -1,4 +1,4 @@
-module DillerRights
+module DealerRights
   def shuffle!(deck)
     deck.cards.shuffle
   end
