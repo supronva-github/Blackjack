@@ -1,11 +1,20 @@
-class Person
-  attr_accessor :money
-  attr_reader :name, :cards
+require './bank'
 
-  def initialize(name, money)
+class Person
+  attr_reader :name, :cards, :deposit
+
+  def initialize(name)
     @name = name
-    @money = money
     @cards = []
+    @deposit = Bank.new
+  end
+
+  def bet
+    @deposit.bet!
+  end
+
+  def get_money(amount)
+    @deposit.add!(amount)
   end
 
   def drop_card
