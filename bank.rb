@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Bank
   BET_AMOUNT = 10
   DEPOSIT = 100

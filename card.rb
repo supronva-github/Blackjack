@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Card
   attr_reader :face, :suite
 
@@ -16,7 +18,7 @@ class Card
   def to_s
     "#{face}#{suite}"
   end
-  
+
   def ace?
     face == 'A'
   end

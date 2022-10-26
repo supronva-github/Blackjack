@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DealerRights
   MAX_CARDS = 3
 
@@ -13,6 +15,6 @@ module DealerRights
   end
 
   def show_cards_hidden
-    "#{'*' * cards.count}"
+    ('*' * cards.count).to_s
   end
 end

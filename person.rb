@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 require './bank'
 
 class Person
+  FORMAT_PERSON_NAME = /[a-z]+/i.freeze
   BLACKJACK = 21
 
   attr_reader :name, :cards, :deposit
@@ -9,6 +12,7 @@ class Person
     @name = name
     @cards = []
     @deposit = Bank.new
+    validate!
   end
 
   def bet
@@ -38,5 +42,9 @@ class Person
     value -= 10 if aces_count == 2
     value -= 20 if aces_count == 3
     value
+  end
+
+  def validate!
+    raise ArgumentError, "Name #{name} player is not valid" if name !~ FORMAT_PERSON_NAME
   end
 end
