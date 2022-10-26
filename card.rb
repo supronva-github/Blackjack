@@ -13,6 +13,10 @@ class Card
     face.to_i
   end
 
+  def to_s
+    "#{face}#{suite}"
+  end
+  
   def ace?
     face == 'A'
   end
