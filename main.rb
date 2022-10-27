@@ -2,5 +2,7 @@
 
 require './game'
 
+require 'pry'
 game = Game.new
+# binding.pry
 game.start

@@ -28,18 +28,18 @@ class Game
         start_round
         break unless continue?
       end
-      puts 'Вы вышли из игры'
+      puts 'You left the game'
     when 2
       print '.......'
     when 3
-      puts 'Вы вышли из игры'
+      puts 'You left the game'
       exit
     end
   end
 
   def start_round
     deal_two_card
-    players_bet
+    bet = players_bet
     show_balance_player
     show_cards_players
     skip_round = false
@@ -52,16 +52,17 @@ class Game
         case action
         when 1
           deal_card_player
-          puts "Вы взяли карту #{player.cards.last}"
-          puts 'Ход переходит диллеру'
+          puts "You took the card #{player.cards.last}"
+          show_card_player
+          puts 'Move passed to the dealer'
           dealer_move
           skip_round = true
         when 2
-          raise ArgumentError, 'Вы уже пропустили ход или взяли карту' if skip_round == true
+          raise ArgumentError, 'Have already skipped a turn or drawn a card' if skip_round == true
 
-          puts 'Вы пропустили ход'
+          puts 'You missed a move'
           skip_round = true
-          puts 'Ход переходит диллеру'
+          puts 'Move passed to the dealer'
           dealer_move
         when 3
           skip_round = false
@@ -71,35 +72,52 @@ class Game
         show_exception(e)
       end
     end
+    winner_gets_money(bet)
     show_winner
   end
+
+  private
 
   def players_bet
     if player.deposit.deposit.zero? || dealer.deposit.deposit.zero?
       raise ArgumentError,
-            'Нет баланса у одного из игроков'
+            'One of the players has no balance'
     end
 
     player.bet + dealer.bet
   end
 
-  def winner_gets_money
-    player.get_money(players_bet) if player_win?
-    dealer.get_money(players_bet) if dealer_win?
+  def balance_refund(bet_amount)
+    player.get_money(bet_amount / 2)
+    dealer.get_money(bet_amount / 2)
+  end
+
+  def draw?
+    player.sum_points == dealer.sum_points && player.sum_points <= BLACKJACK
+  end
+
+  def winner_gets_money(bet_amount)
+    if player_win?
+      player.get_money(bet_amount)
+    elsif dealer_win?
+      dealer.get_money(bet_amount)
+    elsif draw?
+      balance_refund(bet_amount)
+    end
   end
 
   def show_balance_player
-    puts "Ваш баланс: #{player.deposit.deposit}"
+    puts "Your balance: #{player.deposit.deposit}"
   end
 
   def dealer_move
-    puts "Dealer #{dealer.name} думает"
+    puts "Dealer #{dealer.name} thinks"
     sleep 2
     if dealer.sum_points < 17
       deal_card_dealer
-      puts "Dealer #{dealer.name} взял карту"
+      puts "Dealer #{dealer.name} took the card"
     else
-      puts "Dealer #{dealer.name} пропускает ход"
+      puts "Dealer #{dealer.name} skips a turn"
     end
   end
 
@@ -120,9 +138,9 @@ class Game
   end
 
   def show_winner
-    winner_gets_money
-    puts "Player #{player.name} - Win" if player_win?
-    puts "Dealer #{dealer.name} - Win" if dealer_win?
+    puts "Player #{player.name} Balance: #{player.deposit.deposit} - Win!" if player_win?
+    puts "Dealer #{dealer.name} - Win!" if dealer_win?
+    puts 'The dealer and the player have the same amount of money - a Draw!' if draw?
     puts "Player cards: #{player.show_cards}, Dealer cards: #{dealer.show_cards}"
     show_player_points
     show_dealer_points
@@ -134,16 +152,21 @@ class Game
     show_player_points
   end
 
+  def show_card_player
+    puts "Player cards: #{player.show_cards}"
+    show_player_points
+  end
+
   def show_player_points
-    puts "Ваши очки: #{player.sum_points}"
+    puts "You points: #{player.sum_points}"
   end
 
   def show_dealer_points
-    puts "Очки Диллера: #{dealer.sum_points}"
+    puts "Dealer points: #{dealer.sum_points}"
   end
 
   def continue?
-    puts 'Сыграть еще раз? 1.Да 2. Нет'
+    puts 'Play again 1.Yes 2.No'
     gets.chomp.to_i == 1
   end
 
@@ -190,9 +213,9 @@ class Game
   def menu_action_user
     print <<~MENU
       Enter the action number:
-      1 - Взять еще карту
-      2 - Пропустить ход
-      3 - Всрыть карты
+      1 - Take card
+      2 - Skip a turn
+      3 - Open cards
     MENU
   end
 
